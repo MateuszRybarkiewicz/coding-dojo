@@ -7,6 +7,7 @@
 		<module>dojo.persistence</module>
 		<module>dojo.core</module>
 		<module>dojo.database</module>
+		<module>dojo.application</module>
 	</modules>
 	<parent>
 		<groupId>org.springframework.boot</groupId>
