@@ -20,6 +20,7 @@
 		<dependency>
 			<groupId>com.assignment</groupId>
 			<artifactId>dojo.persistence</artifactId>
+			<version>${dojo.version}</version>
 		</dependency>
 	</dependencies>
 
