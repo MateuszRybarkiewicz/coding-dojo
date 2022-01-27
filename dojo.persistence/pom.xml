@@ -5,8 +5,9 @@
 	<parent>
 		<artifactId>coding-dojo-spring-boot</artifactId>
 		<groupId>com.assignment</groupId>
-		<version>0.0.1-SNAPSHOT</version>
+		<version>${dojo.version}</version>
 	</parent>
+	<version>${dojo.persistence.version}</version>
 	<modelVersion>4.0.0</modelVersion>
 
 	<artifactId>dojo.persistence</artifactId>

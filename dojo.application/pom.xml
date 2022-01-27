@@ -37,12 +37,10 @@
 		<dependency>
 			<groupId>com.assignment</groupId>
 			<artifactId>dojo.core</artifactId>
-			<version>${dojo.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.assignment</groupId>
 			<artifactId>dojo.database</artifactId>
-			<version>${dojo.version}</version>
 		</dependency>
 	</dependencies>
 </project>

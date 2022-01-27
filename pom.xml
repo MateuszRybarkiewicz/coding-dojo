@@ -17,13 +17,17 @@
 	</parent>
 	<groupId>com.assignment</groupId>
 	<artifactId>coding-dojo-spring-boot</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>${dojo.version}</version>
 	<name>coding-dojo-spring-boot</name>
 	<description>Spring Boot Coding Dojo</description>
 
 	<properties>
-		<java.version>11</java.version>
 		<dojo.version>0.0.1-SNAPSHOT</dojo.version>
+		<dojo.core.version>0.0.1-SNAPSHOT</dojo.core.version>
+		<dojo.database.version>0.0.1-SNAPSHOT</dojo.database.version>
+		<dojo.persistence.version>0.0.1-SNAPSHOT</dojo.persistence.version>
+		<java.version>11</java.version>
+		<postgresql.version>9.1-901-1.jdbc4</postgresql.version>
 	</properties>
 
 	<dependencies>
@@ -35,18 +39,30 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
-
 		<dependency>
 			<groupId>postgresql</groupId>
 			<artifactId>postgresql</artifactId>
-			<version>9.1-901-1.jdbc4</version>
+			<version>${postgresql.version}</version>
 		</dependency>
-
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>com.assignment</groupId>
+				<artifactId>dojo.core</artifactId>
+				<version>${dojo.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.assignment</groupId>
+				<artifactId>dojo.database</artifactId>
+				<version>${dojo.version}</version>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
 
 </project>
