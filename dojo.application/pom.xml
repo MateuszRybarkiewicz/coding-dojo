@@ -14,8 +14,6 @@
 	<properties>
 		<maven.compiler.source>11</maven.compiler.source>
 		<maven.compiler.target>11</maven.compiler.target>
-		<!-- The main class to start by executing "java -jar" -->
-		<start-class>com.assignment.spring.Application</start-class>
 	</properties>
 
 	<build>
@@ -23,19 +21,7 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
-				<configuration>
-					<layout>ZIP</layout>
-					<mainClass>${start-class}</mainClass>
-				</configuration>
-				<executions>
-					<execution>
-						<goals>
-							<goal>repackage</goal>
-						</goals>
-					</execution>
-				</executions>
 			</plugin>
-
 		</plugins>
 	</build>
 
@@ -44,7 +30,6 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
-
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter</artifactId>
@@ -52,6 +37,11 @@
 		<dependency>
 			<groupId>com.assignment</groupId>
 			<artifactId>dojo.core</artifactId>
+			<version>${dojo.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.assignment</groupId>
+			<artifactId>dojo.database</artifactId>
 			<version>${dojo.version}</version>
 		</dependency>
 	</dependencies>
