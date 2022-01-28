@@ -1,6 +1,7 @@
 package com.assignment.spring;
 
 import com.assignment.spring.api.WeatherResponse;
+import com.assignment.spring.properties.WeatherConnectionProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,11 +18,13 @@ public class WeatherController {
 
     @Autowired
     private WeatherRepository weatherRepository;
+    @Autowired
+    private WeatherConnectionProperties properties;
 
     @RequestMapping("/weather")
     public WeatherEntity weather(HttpServletRequest request) {
         String city = request.getParameter("city");
-        String url = Constants.WEATHER_API_URL.replace("{city}", city).replace("{appid}", Constants.APP_ID);
+        String url = Constants.WEATHER_API_URL.replace("{city}", city).replace("{appid}", properties.getApiKey());
         ResponseEntity<WeatherResponse> response = restTemplate.getForEntity(url, WeatherResponse.class);
         return mapper(response.getBody());
     }

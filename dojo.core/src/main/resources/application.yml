@@ -1,1 +1,2 @@
-
+weather:
+  api-key: ${env.WEATHER_APIKEY}
