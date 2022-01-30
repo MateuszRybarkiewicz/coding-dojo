@@ -1,6 +1,7 @@
 package com.assignment.spring;
 
 import com.assignment.spring.api.WeatherResponse;
+import com.assignment.spring.mapper.WeatherMapper;
 import com.assignment.spring.properties.WeatherConnectionProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +22,8 @@ public class WeatherController {
     @Autowired
     private WeatherConnectionProperties properties;
 
+    private WeatherMapper mapper = WeatherMapper.INSTANCE;
+
     @RequestMapping("/weather")
     public WeatherEntity weather(HttpServletRequest request) {
         String city = request.getParameter("city");
@@ -30,11 +33,7 @@ public class WeatherController {
     }
 
     private WeatherEntity mapper(WeatherResponse response) {
-        WeatherEntity entity = new WeatherEntity();
-        entity.setCity(response.getName());
-        entity.setCountry(response.getSys().getCountry());
-        entity.setTemperature(response.getMain().getTemp());
-
+        WeatherEntity entity = mapper.map(response);
         return weatherRepository.save(entity);
     }
 }
