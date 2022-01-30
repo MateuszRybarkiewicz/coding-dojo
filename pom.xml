@@ -23,9 +23,9 @@
 		<java.version>11</java.version>
 		<postgresql.version>9.1-901-1.jdbc4</postgresql.version>
 		<lombok.version>1.18.20</lombok.version>
-		<junit-pioneer.version>1.5.0</junit-pioneer.version>
-		<junit-jupiter.version>1.8.2</junit-jupiter.version>
-		<junit-release.version>5.8.2</junit-release.version>
+		<!--		<junit-pioneer.version>1.5.0</junit-pioneer.version>-->
+		<!--		<junit-jupiter.version>1.8.2</junit-jupiter.version>-->
+		<!--		<junit-release.version>5.8.2</junit-release.version>-->
 	</properties>
 
 	<modules>
@@ -76,35 +76,35 @@
 				<artifactId>lombok</artifactId>
 				<version>${lombok.version}</version>
 			</dependency>
-			<dependency>
-				<groupId>org.junit-pioneer</groupId>
-				<artifactId>junit-pioneer</artifactId>
-				<version>${junit-pioneer.version}</version>
-				<scope>test</scope>
-			</dependency>
-			<dependency>
-				<groupId>org.junit.jupiter</groupId>
-				<artifactId>junit-jupiter-api</artifactId>
-				<version>${junit-release.version}</version>
-				<scope>test</scope>
-			</dependency>
-			<dependency>
-				<groupId>org.junit.jupiter</groupId>
-				<artifactId>junit-jupiter-engine</artifactId>
-				<version>${junit-release.version}</version>
-				<scope>test</scope>
-			</dependency>
-			<dependency>
-				<groupId>org.junit.platform</groupId>
-				<artifactId>junit-platform-engine</artifactId>
-				<version>${junit-jupiter.version}</version>
-				<scope>test</scope>
-			</dependency>
-			<dependency>
-				<groupId>org.junit.platform</groupId>
-				<artifactId>junit-platform-commons</artifactId>
-				<version>${junit-jupiter.version}</version>
-			</dependency>
+			<!--			<dependency>-->
+			<!--				<groupId>org.junit-pioneer</groupId>-->
+			<!--				<artifactId>junit-pioneer</artifactId>-->
+			<!--				<version>${junit-pioneer.version}</version>-->
+			<!--				<scope>test</scope>-->
+			<!--			</dependency>-->
+			<!--			<dependency>-->
+			<!--				<groupId>org.junit.jupiter</groupId>-->
+			<!--				<artifactId>junit-jupiter-api</artifactId>-->
+			<!--				<version>${junit-release.version}</version>-->
+			<!--				<scope>test</scope>-->
+			<!--			</dependency>-->
+			<!--			<dependency>-->
+			<!--				<groupId>org.junit.jupiter</groupId>-->
+			<!--				<artifactId>junit-jupiter-engine</artifactId>-->
+			<!--				<version>${junit-release.version}</version>-->
+			<!--				<scope>test</scope>-->
+			<!--			</dependency>-->
+			<!--			<dependency>-->
+			<!--				<groupId>org.junit.platform</groupId>-->
+			<!--				<artifactId>junit-platform-engine</artifactId>-->
+			<!--				<version>${junit-jupiter.version}</version>-->
+			<!--				<scope>test</scope>-->
+			<!--			</dependency>-->
+			<!--			<dependency>-->
+			<!--				<groupId>org.junit.platform</groupId>-->
+			<!--				<artifactId>junit-platform-commons</artifactId>-->
+			<!--				<version>${junit-jupiter.version}</version>-->
+			<!--			</dependency>-->
 		</dependencies>
 	</dependencyManagement>
 
