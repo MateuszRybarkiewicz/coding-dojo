@@ -8,7 +8,8 @@ import org.mapstruct.factory.Mappers;
 
 @Mapper
 public interface WeatherMapper {
-    public WeatherMapper INSTANCE = Mappers.getMapper(WeatherMapper.class);
+    WeatherMapper INSTANCE = Mappers.getMapper(WeatherMapper.class);
 
+    @BaseWeatherMapping
     WeatherEntity map(WeatherResponse response);
 }

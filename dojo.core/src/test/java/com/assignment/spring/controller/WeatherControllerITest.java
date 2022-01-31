@@ -2,11 +2,11 @@ package com.assignment.spring.controller;
 
 import com.assignment.spring.WeatherController;
 import com.assignment.spring.configuration.PersistenceConfiguration;
+import com.assignment.spring.entities.WeatherEntity;
 import com.assignment.spring.properties.WeatherConnectionProperties;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tomakehurst.wiremock.client.WireMock;
-import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.Test;
@@ -27,6 +27,7 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
 import static org.junit.Assert.assertNotNull;
@@ -35,7 +36,6 @@ import static org.junit.Assert.assertNotNull;
 @WireMockTest(httpPort = 1234)
 @SetEnvironmentVariable(key = "WEATHER_APIKEY", value = "123")
 public class WeatherControllerITest {
-
 
     @Autowired
     private WeatherController weatherController;
@@ -48,10 +48,11 @@ public class WeatherControllerITest {
     }
 
     @Test
-    public void test(WireMockRuntimeInfo wmRuntimeInfo) {
+    public void givenRequestWithValidApiKey_ItIsProcessed() {
         JsonNode s = parseTestToJson("weather.json");
         assertNotNull(weatherController);
         stubFor(WireMock.get(urlPathMatching(".*"))
+                .withQueryParam("APPID", equalTo("123"))
                 .willReturn(aResponse()
                         .withStatus(200)
                         .withJsonBody(s)
@@ -60,7 +61,7 @@ public class WeatherControllerITest {
 
         HttpServletRequest mock = Mockito.mock(HttpServletRequest.class);
         Mockito.when(mock.getParameter("city")).thenReturn("foo");
-        weatherController.weather(mock);
+        WeatherEntity weather = weatherController.weather(mock);
 
     }
 
