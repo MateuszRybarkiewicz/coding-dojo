@@ -16,11 +16,15 @@
 		<maven.compiler.source>11</maven.compiler.source>
 		<maven.compiler.target>11</maven.compiler.target>
 	</properties>
-	
+
 	<dependencies>
 		<dependency>
 			<groupId>com.assignment</groupId>
 			<artifactId>dojo.persistence</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.assignment</groupId>
+			<artifactId>dojo.database</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.projectlombok</groupId>
@@ -29,6 +33,16 @@
 		<dependency>
 			<groupId>org.mapstruct</groupId>
 			<artifactId>mapstruct</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.github.tomakehurst</groupId>
+			<artifactId>wiremock-jre8</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter</artifactId>
+			<scope>test</scope>
 		</dependency>
 		<!--		<dependency>-->
 		<!--			<groupId>org.junit.jupiter</groupId>-->
@@ -40,11 +54,12 @@
 		<!--			<artifactId>junit-jupiter-engine</artifactId>-->
 		<!--			<scope>test</scope>-->
 		<!--		</dependency>-->
-		<!--		<dependency>-->
-		<!--			<groupId>org.junit-pioneer</groupId>-->
-		<!--			<artifactId>junit-pioneer</artifactId>-->
-		<!--			<scope>test</scope>-->
-		<!--		</dependency>-->
+		<dependency>
+			<groupId>org.junit-pioneer</groupId>
+			<artifactId>junit-pioneer</artifactId>
+			<version>1.5.0</version>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 
 </project>
