@@ -29,9 +29,17 @@ public class WeatherController {
     @RequestMapping("/weather")
     public WeatherEntity weather(HttpServletRequest request) {
         String city = request.getParameter("city");
-        String url = Constants.WEATHER_API_URL.replace("{city}", city).replace("{appid}", properties.getApiKey());
+        String url = buildUrl(city);
         ResponseEntity<WeatherResponse> response = restTemplate.getForEntity(url, WeatherResponse.class);
         return mapper(response.getBody());
+    }
+
+    private String buildUrl(String city) {
+        String url = Constants.WEATHER_API_URL
+                .replace("{host}", properties.getHost())
+                .replace("{city}", city)
+                .replace("{appid}", properties.getApiKey());
+        return url;
     }
 
     private WeatherEntity mapper(WeatherResponse response) {

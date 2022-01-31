@@ -1,2 +1,5 @@
 weather:
   api-key: ${WEATHER_APIKEY:}
+
+  host: http://api.openweathermap.org
+  port: ~

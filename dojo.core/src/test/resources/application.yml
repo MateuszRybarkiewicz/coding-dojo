@@ -1,2 +1,5 @@
 weather:
   api-key: ${WEATHER_APIKEY}
+
+  host: http://localhost
+  port: 1234
