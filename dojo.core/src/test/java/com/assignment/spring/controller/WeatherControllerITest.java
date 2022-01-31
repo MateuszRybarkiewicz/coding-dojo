@@ -2,6 +2,7 @@ package com.assignment.spring.controller;
 
 import com.assignment.spring.CommonUtil;
 import com.assignment.spring.WeatherController;
+import com.assignment.spring.api.WeatherResponse;
 import com.assignment.spring.configuration.PersistenceConfiguration;
 import com.assignment.spring.entities.WeatherEntity;
 import com.assignment.spring.properties.WeatherConnectionProperties;
@@ -25,6 +26,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest(classes = WeatherControllerITest.TestConfig.class)
 @WireMockTest(httpPort = 1234)
@@ -54,7 +56,15 @@ public class WeatherControllerITest {
 
         HttpServletRequest mock = Mockito.mock(HttpServletRequest.class);
         Mockito.when(mock.getParameter("city")).thenReturn("foo");
-        WeatherEntity weather = weatherController.weather(mock);
+        WeatherEntity result = weatherController.weather(mock);
 
+        WeatherResponse expectedResult = CommonUtil.map(responseText.toString(), WeatherResponse.class);
+        assertResultIsCorrect(result, expectedResult);
+    }
+
+    private void assertResultIsCorrect(WeatherEntity result, WeatherResponse expectedResult) {
+        assertEquals(expectedResult.getSys().getCountry(), result.getCountry());
+        assertEquals(expectedResult.getName(), result.getCity());
+        assertEquals(expectedResult.getMain().getTemp(), result.getTemperature());
     }
 }
