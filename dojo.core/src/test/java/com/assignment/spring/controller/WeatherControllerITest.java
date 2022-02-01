@@ -1,16 +1,19 @@
 package com.assignment.spring.controller;
 
 import com.assignment.spring.CommonUtil;
-import com.assignment.spring.ErrorMessage;
+import com.assignment.spring.api.ErrorMessage;
 import com.assignment.spring.api.WeatherResponse;
 import com.assignment.spring.configuration.PersistenceConfiguration;
 import com.assignment.spring.entities.WeatherEntity;
 import com.assignment.spring.properties.WeatherConnectionProperties;
+import com.assignment.spring.repositories.WeatherRepository;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.github.tomakehurst.wiremock.client.MappingBuilder;
 import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder;
 import com.github.tomakehurst.wiremock.client.WireMock;
+import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junitpioneer.jupiter.SetEnvironmentVariable;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +31,7 @@ import org.springframework.http.ResponseEntity;
 
 import java.util.Optional;
 
-import static com.assignment.spring.GlobalControllerAdvice.UNKNOWN_ERROR;
+import static com.assignment.spring.api.GlobalControllerAdvice.UNKNOWN_ERROR;
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor;
@@ -36,11 +39,12 @@ import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
 import static com.github.tomakehurst.wiremock.client.WireMock.verify;
+import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
         (webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@WireMockTest(httpPort = 1234)
+@WireMockTest
 @SetEnvironmentVariable(key = "WEATHER_APIKEY", value = WeatherControllerITest.API_KEY)
 public class WeatherControllerITest {
 
@@ -53,6 +57,15 @@ public class WeatherControllerITest {
 
     @Autowired
     private TestRestTemplate restTemplate;
+    @Autowired
+    private WeatherRepository repository;
+    @Autowired
+    private WeatherConnectionProperties properties;
+
+    @BeforeEach
+    public void setup(WireMockRuntimeInfo wmRuntimeInfo) {
+        properties.setPort(String.valueOf(wmRuntimeInfo.getHttpPort()));
+    }
 
     @Configuration
     @EnableAutoConfiguration
@@ -63,7 +76,7 @@ public class WeatherControllerITest {
     }
 
     @Test
-    public void givenRequestWithValidApiKey_tIsProcessed() {
+    public void givenRequestWithValidApiKey_itIsProcessed() {
         JsonNode responseText = CommonUtil.parseTextToJson("weather.json");
 
         givenWiremockConfiguration(responseText, 200);
@@ -73,7 +86,17 @@ public class WeatherControllerITest {
         WeatherResponse expectedResult = CommonUtil.map(responseText.toString(), WeatherResponse.class);
 
         assertResultIsCorrect(result.getBody(), expectedResult);
+        assertEntityIsPersisted(result.getBody().getId(), expectedResult);
         verifyWiremockWasCalled();
+    }
+
+    private void assertEntityIsPersisted(Integer id, WeatherResponse expectedResult) {
+        Optional<WeatherEntity> byId = repository.findById(id);
+        assertTrue(byId.isPresent());
+        WeatherEntity weatherEntity = byId.get();
+        assertEquals(expectedResult.getSys().getCountry(), weatherEntity.getCountry());
+        assertEquals(expectedResult.getName(), weatherEntity.getCity());
+        assertEquals(expectedResult.getMain().getTemp(), weatherEntity.getTemperature());
     }
 
     @Test

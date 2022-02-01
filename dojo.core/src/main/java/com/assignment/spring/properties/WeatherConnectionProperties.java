@@ -26,7 +26,6 @@ public class WeatherConnectionProperties {
         }
     }
 
-    @NotBlank
     @Getter(AccessLevel.NONE)
     private String host;
 

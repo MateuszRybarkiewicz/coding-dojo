@@ -1,4 +1,4 @@
-package com.assignment.spring;
+package com.assignment.spring.api;
 
 import lombok.Builder;
 import lombok.Data;

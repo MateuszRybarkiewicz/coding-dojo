@@ -1,4 +1,4 @@
-package com.assignment.spring;
+package com.assignment.spring.api;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -12,7 +12,7 @@ public class GlobalControllerAdvice {
 
     @ExceptionHandler(Exception.class)
     @ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
-    public final ErrorMessage catchAllHandle() {
+    public final ErrorMessage catchAllHandle(Exception e) {
         return ErrorMessage.builder()
                 .message(UNKNOWN_ERROR)
                 .statusCode(HttpStatus.INTERNAL_SERVER_ERROR.value())
