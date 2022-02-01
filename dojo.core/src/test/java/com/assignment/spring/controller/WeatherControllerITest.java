@@ -7,6 +7,8 @@ import com.assignment.spring.configuration.PersistenceConfiguration;
 import com.assignment.spring.entities.WeatherEntity;
 import com.assignment.spring.properties.WeatherConnectionProperties;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.github.tomakehurst.wiremock.client.MappingBuilder;
+import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder;
 import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import org.junit.jupiter.api.Test;
@@ -18,9 +20,12 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.web.client.RestTemplate;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Optional;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
@@ -36,14 +41,16 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @SetEnvironmentVariable(key = "WEATHER_APIKEY", value = WeatherControllerITest.API_KEY)
 public class WeatherControllerITest {
 
-    public static final String API_KEY = "1234";
-    public static final String CITY_NAME = "foo";
-    public static final String DATA_2_5_WEATHER = "/data/2.5/weather";
-    public static final String DATA_2_5_QUERY_PARAMETERS = "q=%s&APPID=%s";
-    public static final String PARAM_CITY_NAME = "q";
-    public static final String PARAM_API_KEY = "APPID";
+    public static final String API_KEY = "abc";
+    private static final String CITY_NAME = "foo";
+    private static final String DATA_2_5_WEATHER = "/data/2.5/weather";
+    private static final String DATA_2_5_QUERY_PARAMETERS = "q=%s&APPID=%s";
+    private static final String PARAM_CITY_NAME = "q";
+    private static final String PARAM_API_KEY = "APPID";
     @Autowired
     private WeatherController weatherController;
+    @Autowired
+    private WeatherConnectionProperties properties;
 
     @Configuration
     @EnableAutoConfiguration
@@ -52,25 +59,39 @@ public class WeatherControllerITest {
     public static class TestConfig {
     }
 
+
     @Test
-    public void givenRequestWithValidApiKey_ItIsProcessed() {
+    public void givenRequestWithValidApiKey_tIsProcessed() {
         JsonNode responseText = CommonUtil.parseTextToJson("weather.json");
+
+        givenWiremockConfiguration(responseText, 200);
+
+        HttpServletRequest mock = Mockito.mock(HttpServletRequest.class);
+        Mockito.when(mock.getParameter("city")).thenReturn("foo");
+
+        WeatherEntity result = weatherController.weather(mock);
+
+        WeatherResponse expectedResult = CommonUtil.map(responseText.toString(), WeatherResponse.class);
+
+        assertResultIsCorrect(result, expectedResult);
+        verifyWiremockWasCalled();
+    }
+
+    @Test
+    public void givenRequestWithInvalidApiKey_unauthorizedResponseIsReturned() {
+        givenWiremockConfiguration(401);
 
         stubFor(WireMock.get(urlPathMatching(DATA_2_5_WEATHER))
                 .withQueryParam(PARAM_CITY_NAME, equalTo(CITY_NAME))
-                .withQueryParam(PARAM_API_KEY, equalTo(API_KEY))
+                .withQueryParam(PARAM_API_KEY, equalTo("1234"))
                 .willReturn(aResponse()
-                        .withStatus(200)
-                        .withJsonBody(responseText)
-                        .withHeader("Content-Type", "application/json")
+                        .withStatus(401)
                 ));
 
         HttpServletRequest mock = Mockito.mock(HttpServletRequest.class);
         Mockito.when(mock.getParameter("city")).thenReturn(CITY_NAME);
         WeatherEntity result = weatherController.weather(mock);
 
-        WeatherResponse expectedResult = CommonUtil.map(responseText.toString(), WeatherResponse.class);
-        assertResultIsCorrect(result, expectedResult);
         verifyWiremockWasCalled();
     }
 
@@ -84,4 +105,26 @@ public class WeatherControllerITest {
         assertEquals(expectedResult.getName(), result.getCity());
         assertEquals(expectedResult.getMain().getTemp(), result.getTemperature());
     }
+
+    private void givenWiremockConfiguration(JsonNode responseText, int responseStatus) {
+        configureWiremock(Optional.of(responseText), responseStatus);
+    }
+
+    private void givenWiremockConfiguration(int responseStatus) {
+        configureWiremock(Optional.empty(), responseStatus);
+    }
+
+    private void configureWiremock(Optional<JsonNode> responseText, int responseStatus) {
+        ResponseDefinitionBuilder responseBuilder = aResponse()
+                .withStatus(responseStatus)
+                .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString());
+        responseText.ifPresent(r -> responseBuilder.withJsonBody(r));
+
+        MappingBuilder mappingBuilder = WireMock.get(urlPathMatching(DATA_2_5_WEATHER))
+                .withQueryParam(PARAM_CITY_NAME, equalTo(CITY_NAME))
+                .withQueryParam(PARAM_API_KEY, equalTo(API_KEY))
+                .willReturn(responseBuilder);
+        stubFor(mappingBuilder);
+    }
+
 }

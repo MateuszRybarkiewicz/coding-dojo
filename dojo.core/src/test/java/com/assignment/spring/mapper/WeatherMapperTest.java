@@ -18,7 +18,7 @@ public class WeatherMapperTest {
     private WeatherMapper mapper = WeatherMapper.INSTANCE;
 
     @Test
-    public void givenMappedObject_itItMapped() {
+    public void givenMappedObject_itIsMapped() {
         WeatherResponse weather = parseTextToJson("weather-response.json", WeatherResponse.class);
 
         WeatherEntity map = mapper.map(weather);
