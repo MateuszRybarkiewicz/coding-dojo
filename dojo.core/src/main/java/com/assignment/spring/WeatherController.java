@@ -8,10 +8,9 @@ import com.assignment.spring.repositories.WeatherRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
-
-import javax.servlet.http.HttpServletRequest;
 
 @RestController
 public class WeatherController {
@@ -27,8 +26,7 @@ public class WeatherController {
     private WeatherMapper mapper = WeatherMapper.INSTANCE;
 
     @RequestMapping("/weather")
-    public WeatherEntity weather(HttpServletRequest request) {
-        String city = request.getParameter("city");
+    public WeatherEntity weather(@RequestParam("city") String city) {
         String url = buildUrl(city);
         ResponseEntity<WeatherResponse> response = restTemplate.getForEntity(url, WeatherResponse.class);
         return mapper(response.getBody());
