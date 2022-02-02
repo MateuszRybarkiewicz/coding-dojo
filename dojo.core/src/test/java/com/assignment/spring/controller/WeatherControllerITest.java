@@ -87,18 +87,20 @@ public class WeatherControllerITest {
 
         assertResultIsCorrect(result.getBody(), expectedResult);
         assertEntityIsPersisted(result.getBody().getId(), expectedResult);
-        verifyWiremockWasCalled();
+        verifyWiremockWasCalled(1);
     }
 
-    private void assertEntityIsPersisted(Integer id, WeatherResponse expectedResult) {
-        Optional<WeatherEntity> byId = repository.findById(id);
-        assertTrue(byId.isPresent());
-        WeatherEntity weatherEntity = byId.get();
-        assertEquals(expectedResult.getSys().getCountry(), weatherEntity.getCountry());
-        assertEquals(expectedResult.getName(), weatherEntity.getCity());
-        assertEquals(expectedResult.getMain().getTemp(), weatherEntity.getTemperature());
-    }
+    @Test
+    public void givenRequestWithoutCity_itIsRejected() {
+        JsonNode responseText = CommonUtil.parseTextToJson("weather.json");
+        givenWiremockConfiguration(responseText, 200);
 
+        ResponseEntity<ErrorMessage> result = restTemplate.getForEntity("/weather", ErrorMessage.class);
+
+        assertExceptionWasHandled(result);
+        verifyWiremockWasCalled(0);
+    }
+    
     @Test
     public void givenRequestWithInvalidApiKey_unauthorizedResponseIsReturned() {
         givenWiremockConfiguration(401);
@@ -106,7 +108,7 @@ public class WeatherControllerITest {
         ResponseEntity<ErrorMessage> result = restTemplate.getForEntity("/weather?city=foo", ErrorMessage.class);
 
         assertExceptionWasHandled(result);
-        verifyWiremockWasCalled();
+        verifyWiremockWasCalled(1);
     }
 
     private void assertExceptionWasHandled(ResponseEntity<ErrorMessage> result) {
@@ -114,8 +116,8 @@ public class WeatherControllerITest {
         assertEquals(UNKNOWN_ERROR, result.getBody().getMessage());
     }
 
-    private void verifyWiremockWasCalled() {
-        verify(getRequestedFor(urlEqualTo(DATA_2_5_WEATHER + "?" + String.format(DATA_2_5_QUERY_PARAMETERS, CITY_NAME, API_KEY))));
+    private void verifyWiremockWasCalled(int count) {
+        verify(count, getRequestedFor(urlEqualTo(DATA_2_5_WEATHER + "?" + String.format(DATA_2_5_QUERY_PARAMETERS, CITY_NAME, API_KEY))));
     }
 
 
@@ -146,4 +148,12 @@ public class WeatherControllerITest {
         stubFor(mappingBuilder);
     }
 
+    private void assertEntityIsPersisted(Integer id, WeatherResponse expectedResult) {
+        Optional<WeatherEntity> byId = repository.findById(id);
+        assertTrue(byId.isPresent());
+        WeatherEntity weatherEntity = byId.get();
+        assertEquals(expectedResult.getSys().getCountry(), weatherEntity.getCountry());
+        assertEquals(expectedResult.getName(), weatherEntity.getCity());
+        assertEquals(expectedResult.getMain().getTemp(), weatherEntity.getTemperature());
+    }
 }
